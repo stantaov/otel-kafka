@@ -1,0 +1,13 @@
+apiVersion: bindplane.observiq.com/v1
+kind: AgentType
+metadata:
+  name: otel-kafka
+  displayName: OTel Kafka Agent
+  description: Custom OTel Collector with Kafka receiver/exporter for Bindplane BYOC
+spec:
+  repositoryLink: https://github.com/stantaov/otel-kafka
+  capabilities:
+    reports_available_components: true
+
+
+
