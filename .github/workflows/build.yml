@@ -1,27 +1,27 @@
 name: OpenTelemetry Distribution Build
 
 on:
-   push:
-     tags:
-       - "v*"
-   workflow_dispatch:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
 
-  permissions:
-    contents: write # This is required for creating/modifying releases
+permissions:
+  contents: write  # needed to create/modify releases
 
-  jobs:
-    build:
+jobs:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      # Build the OpenTelemetry distribution using this custom action
+      # Build the distribution from manifest.yaml
       - uses: observiq/otel-distro-builder@v1
         with:
           manifest: "./manifest.yaml"
+          # optional: platforms: "linux/amd64,linux/arm64,windows/amd64,darwin/arm64"
 
       # Create a GitHub Release and attach the build artifacts
-      # This makes the artifacts available for download from the Releases page
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
