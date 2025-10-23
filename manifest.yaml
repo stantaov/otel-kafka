@@ -75,7 +75,7 @@ processors:
   - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/remotetapprocessor v0.138.0
   - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/resourcedetectionprocessor v0.138.0
   - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/resourceprocessor v0.138.0
-  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/routingprocessor v0.138.0
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/routingprocessor v0.132.0
   - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/spanprocessor v0.138.0
   - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/sumologicprocessor v0.138.0
   - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/tailsamplingprocessor v0.138.0
