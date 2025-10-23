@@ -11,23 +11,18 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
-    container:
-      image: golang:1.24
-      env:
-        GOPROXY: https://proxy.golang.org,direct
-        GOSUMDB: sum.golang.org
-
     steps:
       - uses: actions/checkout@v4
 
-      - name: Clean module cache
+      # (Optional) clean go module cache in case previous runs left bad state
+      - name: Clean Go mod cache (defensive)
         run: |
-          go version
-          go env
-          go clean -cache -modcache
+          sudo rm -rf /usr/local/go 2>/dev/null || true
+          go version || true
+          go clean -cache -modcache || true
 
-      - name: Build OTel Distribution
-        uses: observiq/otel-distro-builder@v1
+      # Build with the OTel Distro Builder action
+      - uses: observiq/otel-distro-builder@v1
         with:
           manifest: "./manifest.yaml"
 
@@ -35,3 +30,4 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: ${{ github.workspace }}/artifacts/*
+        env:
