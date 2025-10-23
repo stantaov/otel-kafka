@@ -3,7 +3,6 @@ dist:
   description: Custom OTel Collector incl. kafkaexporter/kafkareceiver for Bindplane BYOC
   version: 0.1.0
   output_path: ./dist
-  otelcol_version: 0.137.0
 
 conf_resolver:
   default_uri_scheme: "env"
