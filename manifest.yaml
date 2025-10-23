@@ -8,6 +8,7 @@ conf_resolver:
   default_uri_scheme: "env"
 
 extensions:
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/extension/bindplaneextension v0.138.0
   - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/extension/opampextension v0.138.0
   - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/extension/healthcheckextension v0.138.0
   - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/extension/storage/filestorage v0.138.0
@@ -25,7 +26,9 @@ processors:
   - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/attributesprocessor v0.138.0
   - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/filterprocessor v0.138.0
   - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/transformprocessor v0.138.0
-  # include if you want k8s pod/service attribution enrichment:
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/metricstransformprocessor v0.138.0
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/throughputmeasurementprocessor v0.138.0
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/snapshotprocessor v0.138.0
   - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/k8sattributesprocessor v0.138.0
 
 exporters:
