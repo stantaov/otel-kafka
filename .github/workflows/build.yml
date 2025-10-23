@@ -16,16 +16,19 @@ jobs:
 
       - name: Build with Dockerized OTel Distro Builder (pin OCB & clear cache)
         run: |
+          set -euo pipefail
           mkdir -p artifacts build .ocb
-          docker pull ghcr.io/observiq/otel-distro-builder:v1
+          docker pull ghcr.io/observiq/otel-distro-builder:main
+
+          # bind-mount .ocb over /app/ocb so the container can't reuse a cached OCB
           docker run --rm \
             -e GOPROXY="https://proxy.golang.org,direct" \
             -e GOSUMDB="sum.golang.org" \
             -v "$PWD":/workspace \
             -v "$PWD/build":/build \
-            -v "$PWD/.ocb":/app/ocb \   # << forces a clean /app/ocb, no cached 0.122.0
+            -v "$PWD/.ocb":/app/ocb \
             -v "$PWD/artifacts":/github/workspace/artifacts \
-            ghcr.io/observiq/otel-distro-builder:v1 \
+            ghcr.io/observiq/otel-distro-builder:main \
               --manifest /workspace/manifest.yaml \
               --artifacts /github/workspace/artifacts \
               --ocb-version 0.137.0 \
@@ -52,3 +55,4 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: artifacts/*
+
