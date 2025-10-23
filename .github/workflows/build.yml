@@ -1,4 +1,4 @@
-name: OpenTelemetry Distribution Build
+name: OTel Distro Build (debug)
 
 on:
   push:
@@ -14,19 +14,44 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # (Optional) clean go module cache in case previous runs left bad state
-      - name: Clean Go mod cache (defensive)
+      - name: Build with Dockerized OTel Distro Builder
+        env:
+          GOPROXY: https://proxy.golang.org,direct
+          GOSUMDB: sum.golang.org
         run: |
-          sudo rm -rf /usr/local/go 2>/dev/null || true
-          go version || true
-          go clean -cache -modcache || true
+          mkdir -p artifacts build
+          docker pull ghcr.io/observiq/otel-distro-builder:main
+          docker run --rm \
+            -e GOPROXY="$GOPROXY" \
+            -e GOSUMDB="$GOSUMDB" \
+            -v "$PWD":/workspace \
+            -v "$PWD/build":/build \
+            -v "$PWD/artifacts":/github/workspace/artifacts \
+            ghcr.io/observiq/otel-distro-builder:main \
+              --manifest /workspace/manifest.yaml \
+              --artifacts /github/workspace/artifacts \
+              --goos linux --goarch amd64 \
+              --go-version 1.24.1
 
-      # Build with the OTel Distro Builder action
-      - uses: observiq/otel-distro-builder@v1
+      - name: Show builder logs (always)
+        if: always()
+        run: |
+          echo "==== build/_build/build.log ===="
+          sed -n '1,200p' build/_build/build.log || true
+          echo "==== build/_build/go.mod ===="
+          sed -n '1,200p' build/_build/go.mod || true
+          echo "==== tail build/_build/go.sum ===="
+          tail -n 200 build/_build/go.sum || true
+
+      - name: Upload builder workdir (on failure)
+        if: failure()
+        uses: actions/upload-artifact@v4
         with:
-          manifest: "./manifest.yaml"
+          name: builder-workdir
+          path: build
 
       - name: Create Release
+        if: success()
         uses: softprops/action-gh-release@v2
         with:
-          files: ${{ github.workspace }}/artifacts/*
+          files: artifacts/*
