@@ -14,34 +14,31 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Build with Dockerized OTel Distro Builder
-        env:
-          GOPROXY: https://proxy.golang.org,direct
-          GOSUMDB: sum.golang.org
+      - name: Build with Dockerized OTel Distro Builder (pin OCB & clear cache)
         run: |
-          mkdir -p artifacts build
-          docker pull ghcr.io/observiq/otel-distro-builder:main
+          mkdir -p artifacts build .ocb
+          docker pull ghcr.io/observiq/otel-distro-builder:v1
           docker run --rm \
-            -e GOPROXY="$GOPROXY" \
-            -e GOSUMDB="$GOSUMDB" \
+            -e GOPROXY="https://proxy.golang.org,direct" \
+            -e GOSUMDB="sum.golang.org" \
             -v "$PWD":/workspace \
             -v "$PWD/build":/build \
+            -v "$PWD/.ocb":/app/ocb \   # << forces a clean /app/ocb, no cached 0.122.0
             -v "$PWD/artifacts":/github/workspace/artifacts \
-            ghcr.io/observiq/otel-distro-builder:main \
+            ghcr.io/observiq/otel-distro-builder:v1 \
               --manifest /workspace/manifest.yaml \
               --artifacts /github/workspace/artifacts \
-              --goos linux --goarch amd64 \
-              --go-version 1.24.1
+              --ocb-version 0.137.0 \
+              --supervisor-version 0.137.0 \
+              --go-version 1.24.1 \
+              --goos linux --goarch amd64
 
       - name: Show builder logs (always)
         if: always()
         run: |
-          echo "==== build/_build/build.log ===="
-          sed -n '1,200p' build/_build/build.log || true
-          echo "==== build/_build/go.mod ===="
-          sed -n '1,200p' build/_build/go.mod || true
-          echo "==== tail build/_build/go.sum ===="
-          tail -n 200 build/_build/go.sum || true
+          echo "==== build/_build/build.log ===="; sed -n '1,200p' build/_build/build.log || true
+          echo "==== build/_build/go.mod ===="; sed -n '1,200p' build/_build/go.mod || true
+          echo "==== tail build/_build/go.sum ===="; tail -n 200 build/_build/go.sum || true
 
       - name: Upload builder workdir (on failure)
         if: failure()
