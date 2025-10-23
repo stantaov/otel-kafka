@@ -8,7 +8,6 @@ conf_resolver:
   default_uri_scheme: "env"
   
 extensions:
-  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/extension/bindplaneextension v0.138.0
   - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/extension/opampextension v0.138.0
   - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/extension/healthcheckextension v0.138.0
   - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/extension/storage/filestorage v0.138.0
